@@ -1,9 +1,8 @@
-app.controller('indexController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService) {
+app.controller('markersController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService) {
     
     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-
     //get request
-    /*$scope.BindMarkers = function () {
+    $scope.BindMarkers = function () {
         
         var markers = getMarkers(location);
         if(!isEmpty(markers)){
@@ -31,5 +30,5 @@ app.controller('indexController', function ($scope, $http, $window, $mdDialog, $
             Alert($mdDialog, 'ERROR', response.statusText);
 
         });
-    }*/
+    }
 });
