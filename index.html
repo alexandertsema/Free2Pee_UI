@@ -6,12 +6,13 @@
     <link href="Content/Style.css" rel="stylesheet" />
     <link rel="stylesheet" href="Content/flexboxgrid.min.css" type="text/css">
     <link href="Content/angular-material.min.css" rel="stylesheet" />
+
     <script src="Scripts/packages/angular/angular.min.js"></script>
     <script src="Scripts/packages/angular-animate/angular-animate.min.js"></script>
     <script src="Scripts/packages/angular-aria/angular-aria.min.js"></script>
-    <script src="Scripts/packages/angular-messages.min.js"></script>
+    <script src="Scripts/packages/angular-messages/angular-messages.min.js"></script>
     <script src="Scripts/packages/angular-material/angular-material.min.js"></script>
-
+    <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4'></script>
 </head>
 <body ng-app="BathroomsNYCApp" ng-cloak>
     <div ng-controller="progressController">
@@ -21,26 +22,19 @@
         </div>
     </div>
 
-    <!--<div class="wrapper">
-      <header class="header">Header</header>
-      <article class="main">
-        <p>MAP GOES HERE</p>
-      </article>
-      <aside class="aside aside-1">Aside 1</aside>
-      <aside class="aside aside-2">Aside 2</aside>
-      <footer class="footer">Footer</footer>
-    </div>-->
-
-    <div class="vertical-container" ng-controller="indexController">
+    <div class="vertical-container" ng-controller="markersController">
         <div>
-            {{test}}
+            <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
         </div>
     </div>
-
+    
+    <script src="Scripts/packages/angular/lodash.js" type="text/javascript"></script>
+    <script src="Scripts/packages/angular/angular-simple-logger.js"></script>
+    <script src="Scripts/packages/angular/angular-google-maps.min.js"></script>
     <script src="Scripts/app.js"></script>
     <script src="Scripts/js/main.js"></script>
     <script src="Scripts/services/progressService.js"></script>
-    <script src="Scripts/controllers/indexController.js"></script>
+    <script src="Scripts/controllers/markersController.js"></script>
     <script src="Scripts/controllers/progressController.js"></script>
 </body>
 </html>
