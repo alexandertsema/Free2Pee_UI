@@ -24,8 +24,21 @@
 
     <div class="vertical-container" ng-controller="markersController">
         <ui-gmap-google-map center="map.center" zoom="map.zoom" options="map.options" control="map.control">
-            <ui-gmap-markers models="markers" coords="'self'" icon="'icon'"></ui-gmap-markers>
-            <ui-gmap-marker coords="position.coords" options="position.options" idkey="position.id" events="position.events"></ui-gmap-marker>
+            <ui-gmap-markers models="markers" idkey="id" coords="'self'" icon="'icon'" click="onClick" info="'info'">
+                <!--<ui-gmap-windows show="show" ng-cloak>
+                    <p ng-non-bindable>
+                        Bathroom # {{id}}, Rating: {{rating}} 
+                        <a ng-non-bindable href="/{{id}}">RATE!</a> 
+                    </p>
+                </ui-gmap-windows>-->
+                <ui-gmap-windows show="show" templateUrl="'annotationWindow.html'" templateParameter="'info'" ng-cloak>
+                    <div ng-non-bindable=""></div>
+                </ui-gmap-windows>
+            </ui-gmap-markers>
+            
+            
+
+            <ui-gmap-marker coords="location.coords" options="location.options" idkey="location.id" events="location.events"></ui-gmap-marker>
         </ui-gmap-google-map>
         <button class="btn btn-primary" ng-click="getDirections()">Get Directions</button>
         
