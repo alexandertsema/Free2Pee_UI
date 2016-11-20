@@ -23,9 +23,15 @@
     </div>
 
     <div class="vertical-container" ng-controller="markersController">
-        <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+        <ui-gmap-google-map center="map.center" zoom="map.zoom" options="map.options" control="map.control">
+            <ui-gmap-markers models="markers" coords="'self'" icon="'icon'"></ui-gmap-markers>
+            <ui-gmap-marker coords="position.coords" options="position.options" idkey="position.id" events="position.events"></ui-gmap-marker>
+        </ui-gmap-google-map>
+        <button class="btn btn-primary" ng-click="getDirections()">Get Directions</button>
+        
+        <!--<div id="directionsList" ng-show="directions.showList" class="panel panel-primary"></div>-->
     </div>
-    
+
     <script src="Scripts/packages/angular/lodash.js" type="text/javascript"></script>
     <script src="Scripts/packages/angular/angular-simple-logger.js"></script>
     <script src="Scripts/packages/angular/angular-google-maps.min.js"></script>
