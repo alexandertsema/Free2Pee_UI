@@ -24,9 +24,16 @@
             <ul class="flex-container">
                 <li class="flex-item-map">
                     <ng-map class="map" center="{{location.latitude}}, {{location.longitude}}" zoom="15">
-                        <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/location.png" ng-cloak />
+                        <custom-control id="home" position="TOP_RIGHT" index="1">
+                            <md-input-container flex-gt-sm class="md-block">
+                                <md-icon md-svg-src="Content/img/icons/locations.svg"></md-icon>
+                                <label>Bathrooms Around</label>
+                                <input ng-model="amountBathrooms" ng-change="bindMarkers(location, amountBathrooms)">
+                            </md-input-container>
+                        </custom-control>
+                        <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/location.png" ng-cloak/>
                         <div ng-repeat="marker in markers">
-                            <marker position="[{{marker.latitude}}, {{marker.longitude}}]" on-click="showWindow(event, marker)" ng-cloak />
+                            <marker position="[{{marker.latitude}}, {{marker.longitude}}]" on-click="showWindow(event, marker)" ng-cloak/>
                             <info-window id="info">
                                 <div class="vertical-container" ng-non-bindable>
                                     <md-card>
@@ -40,7 +47,7 @@
                                         <md-card-content>
                                             <p>
                                                 Open Year-Round: {{activeMarker.openYearRound}} <br>
-                                                Handicap Access: {{activeMarker.handiap}} <br>
+                                                Handicap Access: {{activeMarker.handicap}} <br>
                                                 Comments: {{activeMarker.comments}}
                                             </p>
                                         </md-card-content>
@@ -61,7 +68,7 @@
                                     panel="directions-panel"
                                     travel-mode="WALKING"
                                     origin="{{location.latitude}}, {{location.longitude}}"
-                                    destination="{{destination}}">
+                                    destination="{{destination.latitude}}, {{destination.longitude}}">
                         </directions>
                     </ng-map>
                 </li>

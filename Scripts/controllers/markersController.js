@@ -3,11 +3,12 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
     NgMap.getMap().then(function (map) {
 
+        $scope.amountBathrooms = 30;
         $scope.location = { latitude: 40.764998, longitude: -73.978804 };
 
         getLocation();
-
-        bindMarkers($scope.location);
+        
+        $scope.bindMarkers($scope.location, $scope.amountBathrooms);
 
         $scope.markerMove = function (e) {
 
@@ -69,24 +70,25 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
     $scope.getDirections = function () {
 
-        $scope.destination = [$scope.activeMarker.latitude, $scope.activeMarker.longitude];
+        $scope.map.hideInfoWindow('info', this);
+        $scope.destination = { latitude: $scope.activeMarker.latitude, longitude: $scope.activeMarker.longitude };
     }
 
-    function bindMarkers(location) {
-
-        var markers = getMarkers(location);
+    $scope.bindMarkers = function (location, amountBathrooms) {
+        console.log(location + amountBathrooms);
+        var markers = getMarkers(location, amountBathrooms);
         if (!isEmpty(markers)) {
             $scope.markers = markers;
         }
     }
 
-    function getMarkers(location) {
+    function getMarkers(location, amountBathrooms) {
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
         $http({
             url: "/api/markers/",
             method: "GET",
-            params: { location: location }
+            params: { location: location, amountBathrooms:  amountBathrooms }
         })
         .then(function (response) {
 
@@ -128,6 +130,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         }, function (response) {
 
             //error alert user
+            $scope.activeMarker.rating--;
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);
 
