@@ -1,0 +1,1 @@
+var app = angular.module('BathroomsNYCApp', ['ngMaterial', 'ngMessages', 'ngAnimate', 'ngMap']);

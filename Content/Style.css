@@ -1,0 +1,123 @@
+html, body{
+  height: 100%;
+  width: 100%;
+}
+
+/*shield*/
+.shield {
+    background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    opacity: 0.8;
+    z-index: 98 !important;
+
+    -webkit-transition:all linear 0.5s;
+    transition:all linear 0.5s;
+}
+
+.shield.ng-hide {
+  opacity:0;
+}
+
+/*progress*/
+.progressCirculardemoBasicUsage body {
+    padding: 20px;
+}
+
+.progressCirculardemoBasicUsage h4 {
+    margin: 10px 0;
+}
+
+.progressCirculardemoBasicUsage md-progress-circular {
+    margin-bottom: 20px;
+}
+
+.progressCirculardemoBasicUsage #loaders > md-switch {
+    margin: 0;
+    margin-left: 10px;
+    margin-top: -10px;
+}
+
+.progressCirculardemoBasicUsage #loaders > h5 {
+    margin-top: 0;
+}
+
+.progressCirculardemoBasicUsage #loaders > p {
+    margin-right: 20px;
+    margin-bottom: 24px;
+}
+
+.progressCirculardemoBasicUsage p.small {
+    font-size: 0.8em;
+    margin-top: -18px;
+}
+
+.progressCirculardemoBasicUsage hr {
+    width: 100%;
+    margin-top: 20px;
+    border-color: rgba(221, 221, 177, 0.1);
+}
+
+.progressCirculardemoBasicUsage p.small > code {
+    font-size: 0.8em;
+}
+
+.progressCirculardemoBasicUsage .visible {
+    border-color: rgba(221, 221, 177, 0);
+}
+
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100 !important;
+}
+
+.vertical-container {
+  height: 100%;
+  display: -webkit-flex;
+  display:         flex;
+  -webkit-align-items: center;
+          align-items: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+}
+
+.map {
+    height: 900px; 
+    width: 100%
+}
+.flex-container {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.flex-item-map {
+    padding: 5px;
+    width: 55%;
+    height: 100%;
+    margin-top: 10px;
+}
+.flex-item-directions {
+    padding: 5px;
+    width: 43%;
+    height: 100%;
+    margin-top: 10px;
+}
