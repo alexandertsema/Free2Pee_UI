@@ -28,7 +28,7 @@
                             <md-input-container flex-gt-sm class="md-block">
                                 <md-icon md-svg-src="Content/img/icons/locations.svg"></md-icon>
                                 <label>Bathrooms Around</label>
-                                <input ng-model="amountBathrooms" ng-change="bindMarkers(location, amountBathrooms)">
+                                <input ng-model="amountBathrooms" ng-change="getMarkers(location, amountBathrooms)">
                             </md-input-container>
                         </custom-control>
                         <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/location.png" ng-cloak/>
