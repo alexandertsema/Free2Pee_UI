@@ -8,7 +8,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         getLocation();
         
-        $scope.bindMarkers($scope.location, $scope.amountBathrooms);
+        $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
         $scope.markerMove = function (e) {
 
@@ -63,31 +63,19 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         }
     });
 
-    $scope.rateBathroom = function (id) {
-
-        putRating(id);
-    };
-
     $scope.getDirections = function () {
 
         $scope.map.hideInfoWindow('info', this);
         $scope.destination = { latitude: $scope.activeMarker.latitude, longitude: $scope.activeMarker.longitude };
     }
 
-    $scope.bindMarkers = function (location, amountBathrooms) {
-        console.log(location + amountBathrooms);
-        var markers = getMarkers(location, amountBathrooms);
-        if (!isEmpty(markers)) {
-            $scope.markers = markers;
-        }
-    }
-
-    function getMarkers(location, amountBathrooms) {
+    $scope.getMarkers = function (location, amountBathrooms) {
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
         $http({
             url: url + "bathroom",
             method: "GET",
+            headers: {  },
             params: { latitude: location.latitude, longitude: location.longitude, amountBathrooms: amountBathrooms }
         })
         .then(function (response) {
@@ -96,7 +84,9 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
             resetProgress(progressService, timer, $timeout);
 
-            return response.data;
+            if (!isEmpty(response.data)) {
+                $scope.markers = response.data;
+            }
 
         }, function (response) {
 
@@ -107,14 +97,14 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         });
     }
 
-    function putRating(id) {
+    $scope.rateBathroom = function (id) {
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
         $scope.activeMarker.rating++;
         $http({
             url: url + "vote",
             method: "PUT",
-            params: { id: id }
+            data: { id: id }
         })
         .then(function (response) {
 
