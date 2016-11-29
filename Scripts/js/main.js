@@ -1,4 +1,8 @@
-﻿function Alert($mdDialog, title, content, ev) {
+﻿//const
+var url = 'http://webgis20161127031804.azurewebsites.net/api/';
+
+//functions
+function Alert($mdDialog, title, content, ev) {
     $mdDialog.show(
       $mdDialog.alert()
         .parent(angular.element(document.querySelector('#popupContainer')))
