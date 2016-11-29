@@ -86,15 +86,16 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
         $http({
-            url: "/api/markers/",
+            url: url + "bathroom",
             method: "GET",
-            params: { location: location, amountBathrooms:  amountBathrooms }
+            params: { latitude: location.latitude, longitude: location.longitude, amountBathrooms: amountBathrooms }
         })
         .then(function (response) {
 
             //success bind markers
-            toast($mdToast, 'Here are some bathroom around you!', 3000);
+            toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
             resetProgress(progressService, timer, $timeout);
+
             return response.data;
 
         }, function (response) {
@@ -104,11 +105,6 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             Alert($mdDialog, 'ERROR', response.statusText);
 
         });
-        //mock. remove in production
-        return [
-                    { id: 0, name: '227 Street Playground', location: 'Bronx Boulevard between East 226 and East 228 streets', image: 'Content/img/public-restroom.jpg', openYearRound: 'No', handicap: 'Yes', comments: 'Currently closed', rating: 2, latitude: 40.783857, longitude: -73.975964 },
-                    { id: 2, name: 'Alfred E. Smith Park', location: 'Catherine Slip, Madison & South streets', image: 'Content/img/public-restroom2.jpg', openYearRound: 'Yes', handicap: 'No', comments: 'No soap', rating: 4, latitude: 40.780719, longitude: -73.986958 }
-                ];
     }
 
     function putRating(id) {
@@ -116,21 +112,20 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
         $scope.activeMarker.rating++;
         $http({
-            url: "/api/markers/",
+            url: url + "vote",
             method: "PUT",
             params: { id: id }
         })
         .then(function (response) {
 
-            //success bind markers
+            //success
             toast($mdToast, 'Thank you for feedback!', 3000);
             resetProgress(progressService, timer, $timeout);
-            return response.data;
-
+            
         }, function (response) {
 
-            //error alert user
             $scope.activeMarker.rating--;
+            //error alert user
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);
 
