@@ -18,6 +18,8 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             map.center.latitude = $scope.location[0];
             map.center.longitude = $scope.location[1];
 
+            $scope.getMarkers($scope.location, $scope.amountBathrooms);
+
             $scope.$apply();
         }
 
@@ -33,6 +35,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             map.center.longitude = position.coords.longitude;
 
             $scope.location = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+            $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
             $scope.$apply();
         }
@@ -61,6 +64,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
                 navigator.geolocation.getCurrentPosition(getLocationSuccFn, getLocationErrFn, { enableHighAccuracy: true, timeout: 10000 });
             }
         }
+
     });
 
     $scope.getDirections = function () {
@@ -100,7 +104,9 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
     $scope.rateBathroom = function (id) {
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
+
         $scope.activeMarker.rating++;
+
         $http({
             url: url + "vote",
             method: "PUT",
