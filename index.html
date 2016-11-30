@@ -11,6 +11,9 @@
     <script src="Scripts/packages/angular-messages/angular-messages.min.js"></script>
     <script src="Scripts/packages/angular-material/angular-material.min.js"></script>
     <script src="Scripts/packages/angular/ng-map.min.js"></script>
+	<script src="Scripts/packages/angular/heatmap-layer.js"></script>
+	<!--script src="https://maps.google.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4&libraries=visualization"></script-->
+
 </head>
 <body ng-app="BathroomsNYCApp" ng-cloak>
     <div ng-controller="progressController">
@@ -19,8 +22,8 @@
             <md-progress-linear md-mode="indeterminate"></md-progress-linear>
         </div>
     </div>
-    <div ng-controller="markersController">
-        <div map-lazy-load="https://maps.google.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4">
+    <div ng-controller="markersController as vm">
+        <div map-lazy-load="https://maps.google.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4&libraries=visualization">
             <ul class="flex-container">
                 <li class="flex-item-map">
                     <ng-map class="map" center="{{location.latitude}}, {{location.longitude}}" zoom="15">
@@ -31,6 +34,11 @@
                                 <input ng-model="amountBathrooms" ng-change="getMarkers(location, amountBathrooms)">
                             </md-input-container>
                         </custom-control>
+
+                        <custom-control  position="TOP_LEFT" index="2">
+                          <button class="HeatMapButton" ng-click="vm.toggleHeatmap()">HEATMAP</button>
+                        </custom-control>
+
                         <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/location.png" ng-cloak/>
                         <div ng-repeat="marker in markers">
                             <marker position="[{{marker.latitude}}, {{marker.longitude}}]" on-click="showWindow(event, marker)" ng-cloak/>
@@ -70,6 +78,7 @@
                                     origin="{{location.latitude}}, {{location.longitude}}"
                                     destination="{{destination.latitude}}, {{destination.longitude}}">
                         </directions>
+                        <heatmap-layer id="foo" data="{{heatmapdata}}"></heatmap-layer>						
                     </ng-map>
                 </li>
                 <li class="flex-item-directions">
