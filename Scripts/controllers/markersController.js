@@ -13,13 +13,13 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             
             $scope.zoom =11;
             //$scope.location = { latitude: 40.764998, longitude: -73.978804  };
-            $scope.marker = null;
             
+            $scope.getMarkers($scope.location, 0);
+
             heatmap = map.heatmapLayers.foo;
 
             heatmap.setMap(heatmap.getMap() ? null : map);
 
-            //$scope.$apply();
 
         };
         
@@ -95,30 +95,35 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
     $scope.getMarkers = function (location, amountBathrooms) {
 
-        var timer = setProgress($timeout, $mdToast, progressService, 3000);
-        $http({
-            url: url + "bathroom",
-            method: "GET",
-            headers: {  },
-            params: { latitude: location.latitude, longitude: location.longitude, amountBathrooms: amountBathrooms }
-        })
-        .then(function (response) {
+        if (amountBathrooms == 0) {
+            $scope.markers = null;
+        }
+        else {
+            var timer = setProgress($timeout, $mdToast, progressService, 3000);
+            $http({
+                url: url + "bathroom",
+                method: "GET",
+                headers: {  },
+                params: { latitude: location.latitude, longitude: location.longitude, amountBathrooms: amountBathrooms }
+            })
+            .then(function (response) {
 
-            //success bind markers
-            toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
-            resetProgress(progressService, timer, $timeout);
+                //success bind markers
+                toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
+                resetProgress(progressService, timer, $timeout);
 
-            if (!isEmpty(response.data)) {
-                $scope.markers = response.data;
-            }
+                if (!isEmpty(response.data)) {
+                    $scope.markers = response.data;
+                }
 
-        }, function (response) {
+            }, function (response) {
 
-            //error alert user
-            resetProgress(progressService, timer, $timeout);
-            Alert($mdDialog, 'ERROR', response.statusText);
+                //error alert user
+                resetProgress(progressService, timer, $timeout);
+                Alert($mdDialog, 'ERROR', response.statusText);
 
-        });
+            });
+        }
     }
 
     $scope.rateBathroom = function (id) {
