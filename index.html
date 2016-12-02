@@ -33,7 +33,7 @@
                             <md-input-container flex-gt-sm class="md-block">
                                 <md-icon md-svg-src="Content/img/icons/locations.svg"></md-icon>
                                 <label>Bathrooms Around</label>
-                                <input ng-model="amountBathrooms" ng-change="getMarkers(location, amountBathrooms)">
+                                <input ng-model="amountBathrooms"   ng-keyup="$event.keyCode == 13 ? getMarkers(location, amountBathrooms) : null">
                             </md-input-container>
                         </custom-control>
 
