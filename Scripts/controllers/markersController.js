@@ -10,7 +10,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         $scope.location = { latitude: 40.764998, longitude: -73.978804 };
         var isHeatmapMode = false;
 
-        //getLocation();
+        getLocation();
 
         $scope.toggleHeatmap = function() {
 
@@ -104,7 +104,6 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             //$scope.$apply();
         }
     });
-
 
 
     $scope.getDirections = function () {
