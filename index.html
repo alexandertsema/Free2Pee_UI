@@ -46,7 +46,7 @@
                             </button>
                         </custom-control>
 
-                        <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/location.png" ng-cloak/>
+                        <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/icons/my_location.png" ng-cloak/>
                         
                         <div ng-repeat="marker in markers">
                             <marker position="[{{marker.latitude}}, {{marker.longitude}}]" on-click="showWindow(event, marker)" ng-cloak/>
