@@ -13,8 +13,6 @@
     <script src="Scripts/packages/angular/ng-map.min.js"></script>
 	<script src="Scripts/packages/angular/heatmap-layer.js"></script>
 	<script src="https://maps.google.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4&libraries=visualization"></script>
-    <script src="heatmap-data.js"></script>
-
 </head>
 <body ng-app="BathroomsNYCApp" ng-cloak>
     <div ng-controller="progressController">
@@ -29,58 +27,71 @@
             <ul class="flex-container">
                 <li class="flex-item-map">
                     <ng-map class="map" center="{{location.latitude}}, {{location.longitude}}" zoom="{{zoom}}">
+                        
                         <custom-control id="home" position="TOP_RIGHT" index="1">
-                            <md-input-container flex-gt-sm class="md-block">
+                            <md-input-container flex-gt-sm class="md-block" style="width: 150px">
                                 <md-icon md-svg-src="Content/img/icons/locations.svg"></md-icon>
                                 <label>Bathrooms Around</label>
-                                <input ng-model="amountBathrooms"   ng-keyup="$event.keyCode == 13 ? getMarkers(location, amountBathrooms) : null">
+                                <input ng-model = "amountBathrooms" ng-keyup = "$event.keyCode == 13 ? getMarkers(location, amountBathrooms) : null">
                             </md-input-container>
                         </custom-control>
 
                         <custom-control  position="TOP_LEFT" index="2">
-                          <button class="HeatMapButton" ng-click="toggleHeatmap()">HEATMAP</button>
+                            <button id="heatMapButton" ng-click="toggleHeatmap()">Heatmap</button>
+                        </custom-control>
+                        
+                        <custom-control position="BOTTOM_LEFT" index="3">
+                            <button id="myLocationButton" ng-click="getCenter()" aria-label="My Location">
+                                <md-icon md-svg-icon="Content/img/icons/directions.svg"></md-icon>
+                            </button>
                         </custom-control>
 
                         <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/location.png" ng-cloak/>
+                        
                         <div ng-repeat="marker in markers">
                             <marker position="[{{marker.latitude}}, {{marker.longitude}}]" on-click="showWindow(event, marker)" ng-cloak/>
-                            <info-window id="info">
-                                <div class="vertical-container" ng-non-bindable>
-                                    <md-card>
-                                        <img ng-src="{{activeMarker.image}}" class="md-card-image">
-                                        <md-card-title>
-                                            <md-card-title-text>
-                                                <span class="md-headline">{{activeMarker.name}}</span>
-                                                <span class="md-subhead">{{activeMarker.location}}</span>
-                                            </md-card-title-text>
-                                        </md-card-title>
-                                        <md-card-content>
-                                            <p>
-                                                Open Year-Round: {{activeMarker.openYearRound}} <br>
-                                                Handicap Access: {{activeMarker.handicap}} <br>
-                                                Comments: {{activeMarker.comments}}
-                                            </p>
-                                        </md-card-content>
-                                        <md-card-actions layout="row" layout-align="end center">
-                                            rating: {{activeMarker.rating}}
-                                            <md-button class="md-icon-button" ng-click="rateBathroom(activeMarker.id)" aria-label="Favorite">
-                                                <md-icon md-svg-icon="Content/img/icons/favorite.svg"></md-icon>
-                                            </md-button>
-                                            <md-button class="md-icon-button" ng-click="getDirections()" aria-label="Share">
-                                                <md-icon md-svg-icon="Content/img/icons/directions.svg"></md-icon>
-                                            </md-button>
-                                        </md-card-actions>
-                                    </md-card>
-                                </div>
-                            </info-window>
                         </div>
+                        
+                        <info-window id="info">
+                            <div class="vertical-container" ng-non-bindable>
+                                <md-card>
+                                    <img ng-src="{{activeMarker.image}}" class="md-card-image">
+                                    <md-card-title>
+                                        <md-card-title-text>
+                                            <span class="md-headline">{{activeMarker.name}}</span>
+                                            <span class="md-subhead">{{activeMarker.location}}</span>
+                                        </md-card-title-text>
+                                    </md-card-title>
+                                    <md-card-content>
+                                        <p>
+                                            Open Year-Round: {{activeMarker.openYearRound}} <br>
+                                            Handicap Access: {{activeMarker.handicap}} <br>
+                                            Comments: {{activeMarker.comments}}
+                                        </p>
+                                    </md-card-content>
+                                    <md-card-actions layout="row" layout-align="end center">
+                                        rating: {{activeMarker.rating}}
+                                        <md-button class="md-icon-button" ng-click="rateBathroom(activeMarker.id)" aria-label="Like">
+                                            <md-icon md-svg-icon="Content/img/icons/favorite.svg"></md-icon>
+                                        </md-button>
+                                        <md-button class="md-icon-button" ng-click="getDirections()" aria-label="Directions">
+                                            <md-icon md-svg-icon="Content/img/icons/directions.svg"></md-icon>
+                                        </md-button>
+                                    </md-card-actions>
+                                </md-card>
+                            </div>
+                        </info-window>
+                        
                         <directions draggable="false"
+                                    suppress-markers="true"
                                     panel="directions-panel"
                                     travel-mode="WALKING"
                                     origin="{{location.latitude}}, {{location.longitude}}"
                                     destination="{{destination.latitude}}, {{destination.longitude}}">
                         </directions>
-                        <heatmap-layer id="foo" data="heatmapdata"></heatmap-layer>						
+                        
+                        <heatmap-layer id="foo" data="heatmapdata"></heatmap-layer>			
+                        			
                     </ng-map>
                 </li>
                 <li class="flex-item-directions">
@@ -93,6 +104,7 @@
     <script src="Scripts/app.js"></script>
     <script src="Scripts/js/main.js"></script>
     <script src="Scripts/services/progressService.js"></script>
+    <script src="Scripts/js/heatmap-data.js"></script>
     <script src="Scripts/controllers/markersController.js"></script>
     <script src="Scripts/controllers/progressController.js"></script>
 </body>
