@@ -1,28 +1,42 @@
 "use strict";
 app.controller('markersController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService, $document, NgMap) {
+
     var heatmap;
+
     NgMap.getMap().then(function (map) {
 
         $scope.amountBathrooms = 30;
-        $scope.zoom =15;
+        $scope.zoom = 15;
         $scope.location = { latitude: 40.764998, longitude: -73.978804 };
-     
-        getLocation();
+        var isHeatmapMode = false;
 
-        $scope.toggleHeatmap= function(e) {
-            
-            $scope.zoom =11;
-            //$scope.location = { latitude: 40.764998, longitude: -73.978804  };
-            
-            $scope.getMarkers($scope.location, 0);
+        //getLocation();
+
+        $scope.toggleHeatmap = function() {
+
+            if (isHeatmapMode) {
+
+                $scope.zoom = 11;
+                document.getElementById("heatMapButton").style.color = "#000000";
+                document.getElementById("heatMapButton").style.fontWeight = "500";
+                isHeatmapMode = false;
+                $scope.markers = null;
+
+            } else {
+
+                $scope.zoom = 15;
+                document.getElementById("heatMapButton").style.color = "#565656";
+                document.getElementById("heatMapButton").style.fontWeight = "400";
+                isHeatmapMode = true;
+
+                $scope.getMarkers($scope.location, $scope.amountBathrooms);
+
+                $scope.getCenter(); //todo: not working, needs fixing
+            }
 
             heatmap = map.heatmapLayers.foo;
-
             heatmap.setMap(heatmap.getMap() ? null : map);
-
-
         };
-        
         
         $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
@@ -31,12 +45,9 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             $scope.location.latitude = e.latLng.lat();
             $scope.location.longitude = e.latLng.lng();
 
-            map.center.latitude = $scope.location[0];
-            map.center.longitude = $scope.location[1];
-
             $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
-            $scope.$apply();
+            $scope.getCenter();
         }
 
         $scope.showWindow = function (event, marker) {
@@ -47,13 +58,14 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         function getLocationSuccFn(position) {
 
-            map.center.latitude = position.coords.latitude;
-            map.center.longitude = position.coords.longitude;
+            //map.center.latitude = position.coords.latitude;
+            //map.center.longitude = position.coords.longitude;
 
             $scope.location = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+
             $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
-            $scope.$apply();
+            //$scope.$apply();
         }
 
         function getLocationErrFn(error) {
@@ -81,8 +93,16 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             }
         }
 
+        $scope.getCenter = function () {
 
+            //map.center.latitude = $scope.location[0];
+            //map.center.longitude = $scope.location[1];
 
+            $scope.location.latitude = $scope.location.latitude;
+            $scope.location.longitude = $scope.location.longitude;
+
+            //$scope.$apply();
+        }
     });
 
 
@@ -95,35 +115,32 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
     $scope.getMarkers = function (location, amountBathrooms) {
 
-        if (amountBathrooms == 0) {
-            $scope.markers = null;
-        }
-        else {
-            var timer = setProgress($timeout, $mdToast, progressService, 3000);
-            $http({
-                url: url + "bathroom",
-                method: "GET",
-                headers: {  },
-                params: { latitude: location.latitude, longitude: location.longitude, amountBathrooms: amountBathrooms }
-            })
-            .then(function (response) {
+        if (amountBathrooms == 0) return;
 
-                //success bind markers
-                toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
-                resetProgress(progressService, timer, $timeout);
+        var timer = setProgress($timeout, $mdToast, progressService, 3000);
+        $http({
+            url: url + "bathroom",
+            method: "GET",
+            headers: {  },
+            params: { latitude: location.latitude, longitude: location.longitude, amountBathrooms: amountBathrooms }
+        })
+        .then(function (response) {
 
-                if (!isEmpty(response.data)) {
-                    $scope.markers = response.data;
-                }
+            //success bind markers
+            toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
+            resetProgress(progressService, timer, $timeout);
 
-            }, function (response) {
+            if (!isEmpty(response.data)) {
+                $scope.markers = response.data;
+            }
 
-                //error alert user
-                resetProgress(progressService, timer, $timeout);
-                Alert($mdDialog, 'ERROR', response.statusText);
+        }, function (response) {
 
-            });
-        }
+            //error alert user
+            resetProgress(progressService, timer, $timeout);
+            Alert($mdDialog, 'ERROR', response.statusText);
+
+        });
     }
 
     $scope.rateBathroom = function (id) {
@@ -134,8 +151,10 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         $http({
             url: url + "vote",
+            contenttype: "application/json",
             method: "PUT",
-            data: { id: id }
+            headers: { },
+            data: { id: id, upvote: true }
         })
         .then(function (response) {
 

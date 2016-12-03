@@ -122,11 +122,36 @@ html, body{
     margin-top: 10px;
 }
 
-.HeatMapButton {
+#heatMapButton {
     padding: 8px 13px;
     margin-top: 10px;
-    margin-left: -10px;
-    background-color: #fff;
+    margin-left: -12px;
+    background-color: rgb(255, 255, 255);
     border: none;
+    box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+    font-family: Roboto, Arial, sans-serif !important;
+    color: rgb(86, 86, 86);
+    outline:none !important;
+}
 
+#heatMapButton:hover {
+    background-color: rgb(235, 235, 235);
+}   
+
+#myLocationButton {
+    outline:none !important;
+    box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+    border-radius: 2px;
+    background-color:  rgb(255, 255, 255);
+    border: none;
+    width: 26px;
+    height: 26px;
+    margin-bottom: 38px;
+    margin-left: -65px;
+}
+
+input {
+    font-size: 20px !important;
 }
