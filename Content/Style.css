@@ -155,3 +155,21 @@ html, body{
 input {
     font-size: 20px !important;
 }
+
+#boundingBoxButton {
+    padding: 8px 13px;
+    margin-top: 10px;
+    margin-left: -1px;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+    font-family: Roboto, Arial, sans-serif !important;
+    color: rgb(86, 86, 86);
+    outline:none !important;
+}
+
+#boundingBoxButton:hover {
+    background-color: rgb(235, 235, 235);
+}  

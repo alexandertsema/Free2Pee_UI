@@ -13,9 +13,9 @@
     <script src="Scripts/packages/angular/ng-map.min.js"></script>
 	<script src="Scripts/packages/angular/heatmap-layer.js"></script>
 	<script src="https://maps.google.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4&libraries=visualization"></script>
-	<script src="https://maps.google.com/maps/api/js?libraries=placeses,visualization,drawing,geometry,places"></script>
-	<script src="Scripts/packages/angular/angular.js"></script>
-	<script src="Scripts/packages/angular/ng-map.js"></script>
+	<!--<script src="https://maps.google.com/maps/api/js?libraries=placeses,visualization,drawing,geometry,places"></script>-->
+	<!--<script src="Scripts/packages/angular/angular.js"></script>-->
+	<!--<script src="Scripts/packages/angular/ng-map.js"></script>-->
 </head>
 <body ng-app="BathroomsNYCApp" ng-cloak>
     <div ng-controller="progressController">
@@ -42,20 +42,25 @@
                         <custom-control  position="TOP_LEFT" index="2">
                             <button id="heatMapButton" ng-click="toggleHeatmap()">Heatmap</button>
                         </custom-control>
-						
-						<drawing-manager
+                        
+                        <!--<drawing-manager
 							on-overlaycomplete="onMapOverlayCompleted()"
 							drawing-control-options="{position: 'TOP_CENTER',drawingModes:['rectangle']}"
-							drawingControl="true"
+                            drawingControl="true"
+                            draggable="true"
 							drawingMode="null"
 							markerOptions="{icon:'www.example.com/icon'}"
-							rectangleOptions="{fillColor:'red', editable: false}" >
-						</drawing-manager>
+							rectangleOptions="{fillColor:'green', editable: true}" >
+						</drawing-manager>-->
                         
                         <custom-control position="BOTTOM_LEFT" index="3">
                             <button id="myLocationButton" ng-click="getCenter()" aria-label="My Location">
                                 <md-icon md-svg-icon="Content/img/icons/my_location.svg" style = "margin-left: -5px;"></md-icon>
                             </button>
+                        </custom-control>
+                        
+                        <custom-control position="TOP_LEFT" index="4">
+                            <button id="boundingBoxButton" ng-click="toggleBoundingBox()">Bounding Box</button>
                         </custom-control>
 
                         <marker id="location" position="{{location.latitude}}, {{location.longitude}}" on-mouseup="markerMove()" draggable="true" icon="Content/img/icons/my_location.png" ng-cloak/>
@@ -94,16 +99,24 @@
                             </div>
                         </info-window>
                         
-                        <directions draggable="false"
-                                    suppress-markers="true"
-                                    panel="directions-panel"
-                                    travel-mode="WALKING"
-                                    origin="{{location.latitude}}, {{location.longitude}}"
-                                    destination="{{destination.latitude}}, {{destination.longitude}}">
+                        <directions draggable = "false"
+                                    suppress-markers = "true"
+                                    panel = "directions-panel"
+                                    travel-mode = "WALKING"
+                                    origin = "{{ location.latitude }}, {{ location.longitude }}"
+                                    destination = "{{ destination.latitude }}, {{destination.longitude }}">
                         </directions>
                         
-                        <heatmap-layer id="foo" data="heatmapdata"></heatmap-layer>			
-                        			
+                        <heatmap-layer id = "heatmapLayer" data = "heatmapdata"></heatmap-layer>			
+                        		
+                        <shape name = "rectangle"
+                               visible = "{{ isBoundingBoxMode }}"
+                               editable = "true"
+                               draggable = "true"
+                               bounds="[[{{ boundingBox.northEastBound.latitude }},{{ boundingBox.northEastBound.longitude }}], [{{ boundingBox.southWestBound.latitude }}, {{ boundingBox.southWestBound.longitude }}]]"
+                               on-mouseup = "boundsChanged()"> <!--on_resized event?-->
+                        </shape>
+                        	
                     </ng-map>
                 </li>
                 <li class="flex-item-directions">
@@ -116,7 +129,6 @@
     <script src="Scripts/app.js"></script>
     <script src="Scripts/js/main.js"></script>
     <script src="Scripts/services/progressService.js"></script>
-    <script src="Scripts/js/heatmap-data.js"></script>
     <script src="Scripts/controllers/markersController.js"></script>
     <script src="Scripts/controllers/progressController.js"></script>
 </body>

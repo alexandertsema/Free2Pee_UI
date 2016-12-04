@@ -1,5 +1,6 @@
 ﻿//const
 var url = 'http://webgis20161127031804.azurewebsites.net/api/';
+var heatmapdata = [];
 
 //functions
 function Alert($mdDialog, title, content, ev) {

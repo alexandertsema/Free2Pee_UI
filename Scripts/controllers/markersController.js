@@ -1,23 +1,25 @@
 "use strict";
 app.controller('markersController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService, $document, NgMap) {
 
-    var heatmap;
-	var vm = this;
-	vm.ne,vm.sw;
-	var rectangle = null;
-	var ne_rect_lat,ne_rect_lng,sw_rect_lat,sw_rect_lng;
-
     NgMap.getMap().then(function (map) {
 
+        // variables
         $scope.amountBathrooms = 30;
         $scope.zoom = 15;
         $scope.location = { latitude: 40.764998, longitude: -73.978804 };
-        var isHeatmapMode = false;
-		vm.map = map;
+        $scope.boundingBox = {};
+        $scope.isBoundingBoxMode = false;
+        var isHeatmapMode = true;
+        var boundingBoxSize = 0.01;
 
-        getLocation();
+        //getLocation();
 
-        $scope.toggleHeatmap = function() {
+        $scope.getMarkers($scope.location, $scope.amountBathrooms);
+
+        // events
+        $scope.toggleHeatmap = function () {
+
+            var heatmap = $scope.map.heatmapLayers.heatmapLayer;
 
             if (isHeatmapMode) {
 
@@ -26,6 +28,10 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
                 document.getElementById("heatMapButton").style.fontWeight = "500";
                 isHeatmapMode = false;
                 $scope.markers = null;
+
+                $scope.getHeatMapData();
+
+                heatmap.setMap($scope.map);
 
             } else {
 
@@ -36,14 +42,66 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
                 $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
+                heatmap.setMap(null);
+
+                $scope.getCenter(); //todo: not working, needs fixing
+            } 
+        };
+
+        $scope.toggleBoundingBox = function () {
+
+            if (!$scope.isBoundingBoxMode) {
+
+                $scope.isBoundingBoxMode = true;
+                $scope.markers = null;
+                $scope.zoom = 13;
+
+                document.getElementById("boundingBoxButton").style.color = "#000000";
+                document.getElementById("boundingBoxButton").style.fontWeight = "500";
+
+                //isBoundingBoxMode = false;
+                
+                getBounds();
+
+                $scope.getTopRated($scope.boundingBox.northEastBound, $scope.boundingBox.southWestBound, $scope.amountBathrooms);
+
+            } else {
+
+                $scope.isBoundingBoxMode = false;
+
+                $scope.zoom = 15;
+
+                document.getElementById("boundingBoxButton").style.color = "#565656";
+                document.getElementById("boundingBoxButton").style.fontWeight = "400";
+
+                //isBoundingBoxMode = true;
+
+                $scope.getMarkers($scope.location, $scope.amountBathrooms);
+
                 $scope.getCenter(); //todo: not working, needs fixing
             }
-
-            heatmap = map.heatmapLayers.foo;
-            heatmap.setMap(heatmap.getMap() ? null : map);
         };
+
+        $scope.getCenter = function () {
+
+            //map.center.latitude = $scope.location[0];
+            //map.center.longitude = $scope.location[1];
+
+            $scope.location.latitude = $scope.location.latitude;
+            $scope.location.longitude = $scope.location.longitude;
+
+            //$scope.$apply();
+        }
         
-        $scope.getMarkers($scope.location, $scope.amountBathrooms);
+        $scope.boundsChanged = function () {
+
+            //var northEastBound = { latitude: this.getBounds().getNorthEast().lat(), longitude: this.getBounds().getNorthEast().lng() };
+            //var southWestBound = { latitude: this.getBounds().getSouthWest().lat(), longitude: this.getBounds().getSouthWest().lng() };
+
+            //$scope.getTopRated(northEastBound, southWestBound, $scope.amountBathrooms);
+
+            $scope.getTopRated($scope.boundingBox.northEastBound, $scope.boundingBox.southWestBound, $scope.amountBathrooms);
+        };
 
         $scope.markerMove = function (e) {
 
@@ -97,17 +155,25 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
                 navigator.geolocation.getCurrentPosition(getLocationSuccFn, getLocationErrFn, { enableHighAccuracy: true, timeout: 10000 });
             }
         }
+        
+        function getBounds() {
 
-        $scope.getCenter = function () {
+            var halfSizze = boundingBoxSize / 2;
 
-            //map.center.latitude = $scope.location[0];
-            //map.center.longitude = $scope.location[1];
-
-            $scope.location.latitude = $scope.location.latitude;
-            $scope.location.longitude = $scope.location.longitude;
-
-            //$scope.$apply();
+            $scope.boundingBox = {
+                northEastBound:
+                {
+                    latitude: $scope.location.latitude - halfSizze,
+                    longitude: $scope.location.longitude - halfSizze
+                },
+                southWestBound:
+                {
+                    latitude: $scope.location.latitude + halfSizze,
+                    longitude: $scope.location.longitude + halfSizze
+                }
+            }
         }
+
     });
 
 
@@ -115,6 +181,39 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         $scope.map.hideInfoWindow('info', this);
         $scope.destination = { latitude: $scope.activeMarker.latitude, longitude: $scope.activeMarker.longitude };
+    }
+
+    // HTTP requests
+    $scope.getTopRated = function (northEastBound, southWestBound, amountBathrooms) {
+
+        var timer = setProgress($timeout, $mdToast, progressService, 3000);
+        $http({
+            url: url + "bathroom",
+            method: "GET",
+            headers: {},
+            params: {
+                northEastBoundLatitude: northEastBound.latitude, northEastBoundLongitude: northEastBound.longitude,
+                southWestBoundLatitude: southWestBound.latitude, southWestBoundLongitude: southWestBound.longitude,
+                amountBathrooms: amountBathrooms
+            }
+        })
+        .then(function (response) {
+
+            //success bind markers
+            toast($mdToast, 'Here are ' + amountBathrooms + ' top rated bathrooms inside the bounding box!', 3000);
+            resetProgress(progressService, timer, $timeout);
+
+            if (!isEmpty(response.data)) {
+                $scope.markers = response.data;
+            }
+
+        }, function (response) {
+
+            //error alert user
+            resetProgress(progressService, timer, $timeout);
+            Alert($mdDialog, 'ERROR', response.statusText);
+
+        });
     }
 
     $scope.getMarkers = function (location, amountBathrooms) {
@@ -136,6 +235,34 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
             if (!isEmpty(response.data)) {
                 $scope.markers = response.data;
+            }
+
+        }, function (response) {
+
+            //error alert user
+            resetProgress(progressService, timer, $timeout);
+            Alert($mdDialog, 'ERROR', response.statusText);
+
+        });
+    }
+
+    $scope.getHeatMapData = function () {
+
+        var timer = setProgress($timeout, $mdToast, progressService, 3000);
+        $http({
+            url: url + "bathroom",
+            method: "GET"
+        })
+        .then(function (response) {
+
+            //success bind markers
+            toast($mdToast, 'Here is the heatmap of all bathrooms!', 3000);
+            resetProgress(progressService, timer, $timeout);
+
+            if (!isEmpty(response.data)) {
+                for (var i = 0; i < response.data.length; i++) {
+                    heatmapdata.push(new google.maps.LatLng(response.data[i].latitude, response.data[i].longitude));
+                }
             }
 
         }, function (response) {
@@ -175,16 +302,5 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         });
     }
-	
-	$scope.onMapOverlayCompleted = function(e){
-		if(rectangle != null)
-			rectangle.setMap(null);
-		rectangle = e.overlay;
-		vm.ne = e.overlay.getBounds().getNorthEast();
-		vm.sw = e.overlay.getBounds().getSouthWest();
-		ne_rect_lat = vm.ne.lat();
-		ne_rect_lng = vm.ne.lng();
-		sw_rect_lat = vm.sw.lat();
-		sw_rect_lng = vm.sw.lng();
-  };
+
 });
