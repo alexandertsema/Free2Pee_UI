@@ -2,6 +2,10 @@
 app.controller('markersController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService, $document, NgMap) {
 
     var heatmap;
+	var vm = this;
+	vm.ne,vm.sw;
+	var rectangle = null;
+	var ne_rect_lat,ne_rect_lng,sw_rect_lat,sw_rect_lng;
 
     NgMap.getMap().then(function (map) {
 
@@ -9,6 +13,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         $scope.zoom = 15;
         $scope.location = { latitude: 40.764998, longitude: -73.978804 };
         var isHeatmapMode = false;
+		vm.map = map;
 
         getLocation();
 
@@ -170,4 +175,16 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         });
     }
+	
+	$scope.onMapOverlayCompleted = function(e){
+		if(rectangle != null)
+			rectangle.setMap(null);
+		rectangle = e.overlay;
+		vm.ne = e.overlay.getBounds().getNorthEast();
+		vm.sw = e.overlay.getBounds().getSouthWest();
+		ne_rect_lat = vm.ne.lat();
+		ne_rect_lng = vm.ne.lng();
+		sw_rect_lat = vm.sw.lat();
+		sw_rect_lng = vm.sw.lng();
+  };
 });
