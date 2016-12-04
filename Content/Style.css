@@ -123,6 +123,10 @@ html, body{
 }
 
 #heatMapButton {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -ms-user-select: none;
     padding: 8px 13px;
     margin-top: 10px;
     margin-left: -12px;
@@ -157,6 +161,10 @@ input {
 }
 
 #boundingBoxButton {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     padding: 8px 13px;
     margin-top: 10px;
     margin-left: -1px;
@@ -173,3 +181,8 @@ input {
 #boundingBoxButton:hover {
     background-color: rgb(235, 235, 235);
 }  
+
+.md-icon {
+    min-height: 17px !important;
+    min-width: 17px !important;
+}
