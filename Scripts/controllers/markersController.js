@@ -12,7 +12,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         var isHeatmapMode = true;
         var boundingBoxSize = 0.01;
 
-        //getLocation();
+        getLocation();
 
         $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
@@ -84,13 +84,8 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         $scope.getCenter = function () {
 
-            //map.center.latitude = $scope.location[0];
-            //map.center.longitude = $scope.location[1];
-
-            $scope.location.latitude = $scope.location.latitude;
-            $scope.location.longitude = $scope.location.longitude;
-
-            //$scope.$apply();
+            $scope.location.latitude = $scope.location.latitude - 0.0000000000001; // really dirty trick
+            $scope.location.longitude = $scope.location.longitude - 0.0000000000001;
         }
         
         $scope.boundsChanged = function () {
@@ -109,8 +104,6 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             $scope.location.longitude = e.latLng.lng();
 
             $scope.getMarkers($scope.location, $scope.amountBathrooms);
-
-            $scope.getCenter();
         }
 
         $scope.showWindow = function (event, marker) {
@@ -121,14 +114,9 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         function getLocationSuccFn(position) {
 
-            //map.center.latitude = position.coords.latitude;
-            //map.center.longitude = position.coords.longitude;
-
             $scope.location = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 
             $scope.getMarkers($scope.location, $scope.amountBathrooms);
-
-            //$scope.$apply();
         }
 
         function getLocationErrFn(error) {
