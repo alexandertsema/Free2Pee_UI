@@ -1,24 +1,58 @@
 "use strict";
 app.controller('markersController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService, $document, NgMap) {
 
+    var heatmap;
+	var vm = this;
+	vm.ne,vm.sw;
+	var rectangle = null;
+	var ne_rect_lat,ne_rect_lng,sw_rect_lat,sw_rect_lng;
+
     NgMap.getMap().then(function (map) {
 
         $scope.amountBathrooms = 30;
+        $scope.zoom = 15;
         $scope.location = { latitude: 40.764998, longitude: -73.978804 };
+        var isHeatmapMode = false;
+		vm.map = map;
 
         getLocation();
+
+        $scope.toggleHeatmap = function() {
+
+            if (isHeatmapMode) {
+
+                $scope.zoom = 11;
+                document.getElementById("heatMapButton").style.color = "#000000";
+                document.getElementById("heatMapButton").style.fontWeight = "500";
+                isHeatmapMode = false;
+                $scope.markers = null;
+
+            } else {
+
+                $scope.zoom = 15;
+                document.getElementById("heatMapButton").style.color = "#565656";
+                document.getElementById("heatMapButton").style.fontWeight = "400";
+                isHeatmapMode = true;
+
+                $scope.getMarkers($scope.location, $scope.amountBathrooms);
+
+                $scope.getCenter(); //todo: not working, needs fixing
+            }
+
+            heatmap = map.heatmapLayers.foo;
+            heatmap.setMap(heatmap.getMap() ? null : map);
+        };
         
-        $scope.bindMarkers($scope.location, $scope.amountBathrooms);
+        $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
         $scope.markerMove = function (e) {
 
             $scope.location.latitude = e.latLng.lat();
             $scope.location.longitude = e.latLng.lng();
 
-            map.center.latitude = $scope.location[0];
-            map.center.longitude = $scope.location[1];
+            $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
-            $scope.$apply();
+            $scope.getCenter();
         }
 
         $scope.showWindow = function (event, marker) {
@@ -29,12 +63,14 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         function getLocationSuccFn(position) {
 
-            map.center.latitude = position.coords.latitude;
-            map.center.longitude = position.coords.longitude;
+            //map.center.latitude = position.coords.latitude;
+            //map.center.longitude = position.coords.longitude;
 
             $scope.location = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 
-            $scope.$apply();
+            $scope.getMarkers($scope.location, $scope.amountBathrooms);
+
+            //$scope.$apply();
         }
 
         function getLocationErrFn(error) {
@@ -61,12 +97,19 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
                 navigator.geolocation.getCurrentPosition(getLocationSuccFn, getLocationErrFn, { enableHighAccuracy: true, timeout: 10000 });
             }
         }
+
+        $scope.getCenter = function () {
+
+            //map.center.latitude = $scope.location[0];
+            //map.center.longitude = $scope.location[1];
+
+            $scope.location.latitude = $scope.location.latitude;
+            $scope.location.longitude = $scope.location.longitude;
+
+            //$scope.$apply();
+        }
     });
 
-    $scope.rateBathroom = function (id) {
-
-        putRating(id);
-    };
 
     $scope.getDirections = function () {
 
@@ -74,28 +117,26 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         $scope.destination = { latitude: $scope.activeMarker.latitude, longitude: $scope.activeMarker.longitude };
     }
 
-    $scope.bindMarkers = function (location, amountBathrooms) {
-        console.log(location + amountBathrooms);
-        var markers = getMarkers(location, amountBathrooms);
-        if (!isEmpty(markers)) {
-            $scope.markers = markers;
-        }
-    }
+    $scope.getMarkers = function (location, amountBathrooms) {
 
-    function getMarkers(location, amountBathrooms) {
+        if (amountBathrooms == 0) return;
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
         $http({
-            url: "/api/markers/",
+            url: url + "bathroom",
             method: "GET",
-            params: { location: location, amountBathrooms:  amountBathrooms }
+            headers: {  },
+            params: { latitude: location.latitude, longitude: location.longitude, amountBathrooms: amountBathrooms }
         })
         .then(function (response) {
 
             //success bind markers
-            toast($mdToast, 'Here are some bathroom around you!', 3000);
+            toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
             resetProgress(progressService, timer, $timeout);
-            return response.data;
+
+            if (!isEmpty(response.data)) {
+                $scope.markers = response.data;
+            }
 
         }, function (response) {
 
@@ -104,36 +145,46 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             Alert($mdDialog, 'ERROR', response.statusText);
 
         });
-        //mock. remove in production
-        return [
-                    { id: 0, name: '227 Street Playground', location: 'Bronx Boulevard between East 226 and East 228 streets', image: 'Content/img/public-restroom.jpg', openYearRound: 'No', handicap: 'Yes', comments: 'Currently closed', rating: 2, latitude: 40.783857, longitude: -73.975964 },
-                    { id: 2, name: 'Alfred E. Smith Park', location: 'Catherine Slip, Madison & South streets', image: 'Content/img/public-restroom2.jpg', openYearRound: 'Yes', handicap: 'No', comments: 'No soap', rating: 4, latitude: 40.780719, longitude: -73.986958 }
-                ];
     }
 
-    function putRating(id) {
+    $scope.rateBathroom = function (id) {
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
+
         $scope.activeMarker.rating++;
+
         $http({
-            url: "/api/markers/",
+            url: url + "vote",
+            contenttype: "application/json",
             method: "PUT",
-            params: { id: id }
+            headers: { },
+            data: { id: id, upvote: true }
         })
         .then(function (response) {
 
-            //success bind markers
+            //success
             toast($mdToast, 'Thank you for feedback!', 3000);
             resetProgress(progressService, timer, $timeout);
-            return response.data;
-
+            
         }, function (response) {
 
-            //error alert user
             $scope.activeMarker.rating--;
+            //error alert user
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);
 
         });
     }
+	
+	$scope.onMapOverlayCompleted = function(e){
+		if(rectangle != null)
+			rectangle.setMap(null);
+		rectangle = e.overlay;
+		vm.ne = e.overlay.getBounds().getNorthEast();
+		vm.sw = e.overlay.getBounds().getSouthWest();
+		ne_rect_lat = vm.ne.lat();
+		ne_rect_lng = vm.ne.lng();
+		sw_rect_lat = vm.sw.lat();
+		sw_rect_lng = vm.sw.lng();
+  };
 });
