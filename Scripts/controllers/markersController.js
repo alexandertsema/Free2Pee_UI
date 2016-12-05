@@ -18,7 +18,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         $scope.getHeatMapData();
         // events
         $scope.toggleHeatmap = function () {
-           ;
+           
             var heatmap = $scope.map.heatmapLayers.heatmapLayer;
 
             if (isHeatmapMode) {
