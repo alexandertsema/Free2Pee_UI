@@ -15,10 +15,10 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         getLocation();
 
         $scope.getMarkers($scope.location, $scope.amountBathrooms);
-
+        $scope.getHeatMapData();
         // events
         $scope.toggleHeatmap = function () {
-
+           ;
             var heatmap = $scope.map.heatmapLayers.heatmapLayer;
 
             if (isHeatmapMode) {
@@ -29,7 +29,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
                 isHeatmapMode = false;
                 $scope.markers = null;
 
-                $scope.getHeatMapData();
+                $scope.displayHeatmapMsg();
 
                 heatmap.setMap($scope.map);
 
@@ -234,9 +234,15 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         });
     }
 
+    $scope.displayHeatmapMsg = function() {
+        var timer = setProgress($timeout, $mdToast, progressService, 3000);
+        toast($mdToast, 'Here is the heatmap of all bathrooms!', 3000);
+        resetProgress(progressService, timer, $timeout);
+    }
+
     $scope.getHeatMapData = function () {
 
-        var timer = setProgress($timeout, $mdToast, progressService, 3000);
+        //var timer = setProgress($timeout, $mdToast, progressService, 3000);
         $http({
             url: url + "bathroom",
             method: "GET"
@@ -244,8 +250,8 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         .then(function (response) {
 
             //success bind markers
-            toast($mdToast, 'Here is the heatmap of all bathrooms!', 3000);
-            resetProgress(progressService, timer, $timeout);
+            //toast($mdToast, 'Here is the heatmap of all bathrooms!', 3000);
+            //resetProgress(progressService, timer, $timeout);
 
             if (!isEmpty(response.data)) {
                 for (var i = 0; i < response.data.length; i++) {
