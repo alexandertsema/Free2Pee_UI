@@ -44,7 +44,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
                 heatmap.setMap(null);
 
-                $scope.getCenter(); //todo: not working, needs fixing
+                $scope.getCenter();
             } 
         };
 
@@ -59,8 +59,6 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
                 document.getElementById("boundingBoxButton").style.color = "#000000";
                 document.getElementById("boundingBoxButton").style.fontWeight = "500";
 
-                //isBoundingBoxMode = false;
-                
                 getBounds();
 
                 $scope.getTopRated($scope.boundingBox.northEastBound, $scope.boundingBox.southWestBound, $scope.amountBathrooms);
@@ -74,11 +72,9 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
                 document.getElementById("boundingBoxButton").style.color = "#565656";
                 document.getElementById("boundingBoxButton").style.fontWeight = "400";
 
-                //isBoundingBoxMode = true;
-
                 $scope.getMarkers($scope.location, $scope.amountBathrooms);
 
-                $scope.getCenter(); //todo: not working, needs fixing
+                $scope.getCenter();
             }
         };
 
@@ -89,11 +85,6 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         }
         
         $scope.boundsChanged = function () {
-
-            //var northEastBound = { latitude: this.getBounds().getNorthEast().lat(), longitude: this.getBounds().getNorthEast().lng() };
-            //var southWestBound = { latitude: this.getBounds().getSouthWest().lat(), longitude: this.getBounds().getSouthWest().lng() };
-
-            //$scope.getTopRated(northEastBound, southWestBound, $scope.amountBathrooms);
 
             $scope.getTopRated($scope.boundingBox.northEastBound, $scope.boundingBox.southWestBound, $scope.amountBathrooms);
         };
@@ -266,7 +257,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         var timer = setProgress($timeout, $mdToast, progressService, 3000);
 
-        $scope.activeMarker.rating++;
+        $scope.activeMarker.upVotes++;
 
         $http({
             url: url + "vote",
@@ -283,7 +274,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
             
         }, function (response) {
 
-            $scope.activeMarker.rating--;
+            $scope.activeMarker.upVotes--;
             //error alert user
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);

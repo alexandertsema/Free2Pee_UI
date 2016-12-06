@@ -182,7 +182,7 @@ input {
     background-color: rgb(235, 235, 235);
 }  
 
-.md-icon {
+md-icon {
     min-height: 17px !important;
     min-width: 17px !important;
 }
