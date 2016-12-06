@@ -1,5 +1,7 @@
 "use strict";
-app.controller('markersController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService, $document, NgMap) {
+app.controller('mapController', function ($scope, $http, $window, $mdDialog, $mdToast, $timeout, progressService, $document, $q, NgMap) {
+
+    var heatmap;
 
     NgMap.getMap().then(function (map) {
 
@@ -19,7 +21,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         // events
         $scope.toggleHeatmap = function () {
 
-            var heatmap = $scope.map.heatmapLayers.heatmapLayer;
+            heatmap = $scope.map.heatmapLayers.heatmapLayer;
 
             if (isHeatmapMode) {
 
@@ -31,7 +33,7 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
                 $scope.getHeatMapData();
 
-                heatmap.setMap($scope.map);
+                //heatmap.setMap($scope.map);
 
             } else {
 
@@ -86,7 +88,12 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         
         $scope.boundsChanged = function () {
 
-            $scope.getTopRated($scope.boundingBox.northEastBound, $scope.boundingBox.southWestBound, $scope.amountBathrooms);
+            var northEastBound = { latitude: this.getBounds().getNorthEast().lat(), longitude: this.getBounds().getNorthEast().lng() };
+            var southWestBound = { latitude: this.getBounds().getSouthWest().lat(), longitude: this.getBounds().getSouthWest().lng() };
+
+            $scope.getTopRated(northEastBound, southWestBound, $scope.amountBathrooms);
+
+            //$scope.getTopRated($scope.boundingBox.northEastBound, $scope.boundingBox.southWestBound, $scope.amountBathrooms);
         };
 
         $scope.markerMove = function (e) {
@@ -137,18 +144,18 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         
         function getBounds() {
 
-            var halfSizze = boundingBoxSize / 2;
+            var halfSize = boundingBoxSize / 2;
 
             $scope.boundingBox = {
                 northEastBound:
                 {
-                    latitude: $scope.location.latitude - halfSizze,
-                    longitude: $scope.location.longitude - halfSizze
+                    latitude: $scope.location.latitude - halfSize,
+                    longitude: $scope.location.longitude - halfSize
                 },
                 southWestBound:
                 {
-                    latitude: $scope.location.latitude + halfSizze,
-                    longitude: $scope.location.longitude + halfSizze
+                    latitude: $scope.location.latitude + halfSize,
+                    longitude: $scope.location.longitude + halfSize
                 }
             }
         }
@@ -178,17 +185,15 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         })
         .then(function (response) {
 
-            //success bind markers
-            toast($mdToast, 'Here are ' + amountBathrooms + ' top rated bathrooms inside the bounding box!', 3000);
-            resetProgress(progressService, timer, $timeout);
-
             if (!isEmpty(response.data)) {
                 $scope.markers = response.data;
             }
 
+            toast($mdToast, 'Here are ' + amountBathrooms + ' top rated bathrooms inside the bounding box!', 3000);
+            resetProgress(progressService, timer, $timeout);
+
         }, function (response) {
 
-            //error alert user
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);
 
@@ -208,7 +213,6 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         })
         .then(function (response) {
 
-            //success bind markers
             toast($mdToast, 'Here are ' + amountBathrooms + ' bathrooms around you!', 3000);
             resetProgress(progressService, timer, $timeout);
 
@@ -218,7 +222,6 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
 
         }, function (response) {
 
-            //error alert user
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);
 
@@ -234,19 +237,18 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         })
         .then(function (response) {
 
-            //success bind markers
-            toast($mdToast, 'Here is the heatmap of all bathrooms!', 3000);
-            resetProgress(progressService, timer, $timeout);
-
             if (!isEmpty(response.data)) {
                 for (var i = 0; i < response.data.length; i++) {
                     heatmapdata.push(new google.maps.LatLng(response.data[i].latitude, response.data[i].longitude));
                 }
+                heatmap.setMap($scope.map); //todo: avoid that trick
             }
+
+            toast($mdToast, 'Here is the heatmap of all bathrooms!', 3000);
+            resetProgress(progressService, timer, $timeout);
 
         }, function (response) {
 
-            //error alert user
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);
 
@@ -268,14 +270,13 @@ app.controller('markersController', function ($scope, $http, $window, $mdDialog,
         })
         .then(function (response) {
 
-            //success
             toast($mdToast, 'Thank you for feedback!', 3000);
             resetProgress(progressService, timer, $timeout);
             
         }, function (response) {
 
             $scope.activeMarker.upVotes--;
-            //error alert user
+
             resetProgress(progressService, timer, $timeout);
             Alert($mdDialog, 'ERROR', response.statusText);
 

@@ -20,7 +20,7 @@
             <md-progress-linear md-mode="indeterminate"></md-progress-linear>
         </div>
     </div>
-    <div ng-controller="markersController">
+    <div ng-controller="mapController">
         <div map-lazy-load="https://maps.google.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4&libraries=visualization">
             <ul class="flex-container">
                 <li class="flex-item-map">
@@ -66,9 +66,9 @@
                                     </md-card-title>
                                     <md-card-content>
                                         <p>
-                                            Open Year-Round: {{activeMarker.openYearRound}} <br>
-                                            Handicap Access: {{activeMarker.handicap}} <br>
-                                            Comments: {{activeMarker.comments}}
+                                            Open Year-Round: {{ activeMarker.openYearRound | booleanFilter }} <br>
+                                            Handicap Access: {{ activeMarker.handicap | booleanFilter }} <br>
+                                            Comments: {{ activeMarker.comments }}
                                         </p>
                                     </md-card-content>
                                     <md-card-actions layout="row" layout-align="end center">
@@ -114,7 +114,8 @@
     <script src="Scripts/app.js"></script>
     <script src="Scripts/js/main.js"></script>
     <script src="Scripts/services/progressService.js"></script>
-    <script src="Scripts/controllers/markersController.js"></script>
+    <script src="Scripts/controllers/mapController.js"></script>
     <script src="Scripts/controllers/progressController.js"></script>
+    <script src="Scripts/filters/booleanFilter.js"></script>
 </body>
 </html>
