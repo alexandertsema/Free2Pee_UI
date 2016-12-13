@@ -82,8 +82,11 @@ app.controller('mapController', function ($scope, $http, $window, $mdDialog, $md
 
         $scope.getCenter = function () {
 
-            $scope.location.latitude = $scope.location.latitude - 0.0000000000001; // really dirty trick
-            $scope.location.longitude = $scope.location.longitude - 0.0000000000001;
+           $scope.location.latitude = $scope.location.latitude - 0.0000000000001; // really dirty trick
+           $scope.location.longitude = $scope.location.longitude - 0.0000000000001;
+
+            getLocation();
+ 
         }
         
         $scope.boundsChanged = function () {
@@ -92,8 +95,18 @@ app.controller('mapController', function ($scope, $http, $window, $mdDialog, $md
             var southWestBound = { latitude: this.getBounds().getSouthWest().lat(), longitude: this.getBounds().getSouthWest().lng() };
 
             $scope.getTopRated(northEastBound, southWestBound, $scope.amountBathrooms);
+        };
 
-            //$scope.getTopRated($scope.boundingBox.northEastBound, $scope.boundingBox.southWestBound, $scope.amountBathrooms);
+        $scope.disableBoundsChanged = function () {
+            document.getElementById("rectangle").removeEventListener("mouseover", $scope.test);
+        };
+
+        $scope.enableBoundsChanged = function () {
+            document.getElementById("rectangle").addEventListener("bounds_changed", $scope.boundsChanged);
+        };
+
+        $scope.test = function () {
+            console.log("triggered");
         };
 
         $scope.markerMove = function (e) {

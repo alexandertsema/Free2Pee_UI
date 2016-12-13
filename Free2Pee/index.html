@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-    <title>Bathrooms NYC</title>
+    <title>Free2Pee</title>
     <link href="Content/Style.css" rel="stylesheet" />
     <link rel="stylesheet" href="Content/flexboxgrid.min.css" type="text/css">
     <link href="Content/angular-material.min.css" rel="stylesheet" />
@@ -68,7 +68,6 @@
                                         <p>
                                             Open Year-Round: {{ activeMarker.openYearRound | booleanFilter }} <br>
                                             Handicap Access: {{ activeMarker.handicap | booleanFilter }} <br>
-                                            Comments: {{ activeMarker.comments }}
                                         </p>
                                     </md-card-content>
                                     <md-card-actions layout="row" layout-align="end center">
@@ -94,12 +93,16 @@
                         
                         <heatmap-layer id = "heatmapLayer" data = "heatmapdata"></heatmap-layer>			
                         		
-                        <shape name = "rectangle"
+                        <shape id="rectangle"
+                               name = "rectangle"
                                visible = "{{ isBoundingBoxMode }}"
                                editable = "true"
                                draggable = "true"
                                bounds="[[{{ boundingBox.northEastBound.latitude }},{{ boundingBox.northEastBound.longitude }}], [{{ boundingBox.southWestBound.latitude }}, {{ boundingBox.southWestBound.longitude }}]]"
-                               on-mouseup = "boundsChanged()"> <!--on_resized event?-->
+                               on-bounds_changed="boundsChanged()"
+                               on-mousedown="disableBoundsChanged()"
+                               on-mouseup="enableBoundsChanged()"
+                               on-mouseover="test()">
                         </shape>
                         	
                     </ng-map>
