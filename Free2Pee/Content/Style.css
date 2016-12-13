@@ -156,10 +156,13 @@ html, body{
     margin-left: -65px;
 }
 
+<<<<<<< HEAD
 #myLocationButton:hover {
     background-color: rgb(235, 235, 235);
 }
 
+=======
+>>>>>>> 18b84ed32ba651e0e537c66913c9517973a96e7b
 input {
     font-size: 20px !important;
 }
@@ -186,7 +189,11 @@ input {
     background-color: rgb(235, 235, 235);
 }  
 
+<<<<<<< HEAD
 md-icon {
+=======
+.md-icon {
+>>>>>>> 18b84ed32ba651e0e537c66913c9517973a96e7b
     min-height: 17px !important;
     min-width: 17px !important;
 }
