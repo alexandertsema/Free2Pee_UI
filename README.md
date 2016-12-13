@@ -1,13 +1,12 @@
-# GISFinalProjectWebClient
+# Free2Pee: NYC Bathroom Locator
 
-index.html is our main and only page, it's body will correspond to ng-app
 
-app.js is a entry point of angular
+% This service was developed as a part of Web GIS course. %
 
-controllers folder contains angular controllers (I assume we will have a couple of them)
 
-packages folder contains libs (don't modify any of them)
+Finding a public bathroom in New York City can be a challenge. This project aims to make finding a restroom easily.
 
-js folder contains shared js functions etc
 
-services folder contains angular services
+Objectives:
+	- provide a simple user interface which will assist users to find a restroom within their vicinity
+	- provide a forum for public interaction and thoughts through the use of a rating system

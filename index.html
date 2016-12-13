@@ -20,7 +20,11 @@
             <md-progress-linear md-mode="indeterminate"></md-progress-linear>
         </div>
     </div>
+<<<<<<< HEAD
     <div ng-controller="mapController">
+=======
+    <div ng-controller="markersController">
+>>>>>>> 18b84ed32ba651e0e537c66913c9517973a96e7b
         <div map-lazy-load="https://maps.google.com/maps/api/js?key=AIzaSyBu9juBXdxKCdLOpsJSgKzcvrk-hudIaS4&libraries=visualization">
             <ul class="flex-container">
                 <li class="flex-item-map">
@@ -66,12 +70,22 @@
                                     </md-card-title>
                                     <md-card-content>
                                         <p>
+<<<<<<< HEAD
                                             Open Year-Round: {{ activeMarker.openYearRound | booleanFilter }} <br>
                                             Handicap Access: {{ activeMarker.handicap | booleanFilter }} <br>
                                         </p>
                                     </md-card-content>
                                     <md-card-actions layout="row" layout-align="end center">
                                         {{activeMarker.upVotes}}
+=======
+                                            Open Year-Round: {{activeMarker.openYearRound}} <br>
+                                            Handicap Access: {{activeMarker.handicap}} <br>
+                                            Comments: {{activeMarker.comments}}
+                                        </p>
+                                    </md-card-content>
+                                    <md-card-actions layout="row" layout-align="end center">
+                                        rating: {{activeMarker.rating}}
+>>>>>>> 18b84ed32ba651e0e537c66913c9517973a96e7b
                                         <md-button class="md-icon-button" ng-click="rateBathroom(activeMarker.id)" aria-label="Like">
                                             <md-icon md-svg-icon="Content/img/icons/favorite.svg"></md-icon>
                                         </md-button>
@@ -93,16 +107,24 @@
                         
                         <heatmap-layer id = "heatmapLayer" data = "heatmapdata"></heatmap-layer>			
                         		
+<<<<<<< HEAD
                         <shape id="rectangle"
                                name = "rectangle"
+=======
+                        <shape name = "rectangle"
+>>>>>>> 18b84ed32ba651e0e537c66913c9517973a96e7b
                                visible = "{{ isBoundingBoxMode }}"
                                editable = "true"
                                draggable = "true"
                                bounds="[[{{ boundingBox.northEastBound.latitude }},{{ boundingBox.northEastBound.longitude }}], [{{ boundingBox.southWestBound.latitude }}, {{ boundingBox.southWestBound.longitude }}]]"
+<<<<<<< HEAD
                                on-bounds_changed="boundsChanged()"
                                on-mousedown="disableBoundsChanged()"
                                on-mouseup="enableBoundsChanged()"
                                on-mouseover="test()">
+=======
+                               on-mouseup = "boundsChanged()"> <!--on_resized event?-->
+>>>>>>> 18b84ed32ba651e0e537c66913c9517973a96e7b
                         </shape>
                         	
                     </ng-map>
